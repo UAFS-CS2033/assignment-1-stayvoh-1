@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -20,18 +21,26 @@ public class Server{
 
         //*** Application Protocol *****
         String buffer = in.readLine();
-        while(buffer != null && buffer.length() != 0){
-            System.out.println(buffer);
-            buffer = in.readLine();
+        String[] tokens = buffer.split(" ");
+        if(tokens[0].equals("GET")){
+            if(tokens[1].equals("/")){
+                tokens[1] = "/home.html";
+            }
+            String file = "docroot" + tokens[1];
+            
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            out.println("HTTP/1.1 200 OK");
+            out.println("Content-Type: txt.html");
+            out.println();
+            String line;
+            while((line = br.readLine()) != null){
+                out.println(line);
+            }
         }
-        out.printf("HTTP/1.1 200 OK\n");
-        out.printf("Content-Length: 34\n");
-        out.printf("Content-Type: text/html\n\n");
-
-        out.printf("<h1>Welcome to the Web Server</h1>");
        
         in.close();
         out.close();
+
     }
 
     public void run() throws IOException{
